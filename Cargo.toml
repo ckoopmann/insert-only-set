@@ -1,6 +1,6 @@
 [package]
 name = "insert-only-set"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Christian Koopmann <c.k.e.koopmann@gmail.com>"]
 edition = "2021"
 description = "A procedural macro to generate insert-only sets from enums"
