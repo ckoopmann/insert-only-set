@@ -113,7 +113,7 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
-        #[derive(Debut, Default)]
+        #[derive(Debug, Default)]
         pub struct #set_name {
             #(#fields)*
         }
