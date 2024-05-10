@@ -13,7 +13,7 @@ mod tests {
 
     #[test]
     fn test_insert_and_contains() {
-        let set = Person::InsertOnlySet();
+        let set = PersonInsertOnlySet::default();
 
         assert!(!set.contains(Person::Customer));
         assert!(!set.contains(Person::Employee));
