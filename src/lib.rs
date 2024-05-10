@@ -12,16 +12,16 @@ use syn::{parse_macro_input, DeriveInput, Data, Ident};
 /// # Examples
 ///
 /// ```rust
-/// use insert_only_set::GenerateInsertOnlySet;
+/// use insert_only_set::InsertOnlySet;
 ///
-/// #[derive(GenerateInsertOnlySet, Debug, PartialEq)]
+/// #[derive(InsertOnlySet, Debug, PartialEq)]
 /// pub enum Type {
 ///     Customer,
 ///     Employee,
 /// }
 ///
 /// fn main() {
-///     let set = TypeInsertOnlySet::new();
+///     let set = Type::InsertOnlySet();
 ///
 ///     assert!(!set.contains(Type::Customer));
 ///     assert!(!set.contains(Type::Employee));
@@ -39,7 +39,7 @@ use syn::{parse_macro_input, DeriveInput, Data, Ident};
 ///     }
 /// }
 /// ```
-#[proc_macro_derive(GenerateInsertOnlySet)]
+#[proc_macro_derive(InsertOnlySet)]
 pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -140,6 +140,13 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
                 let mut variants = Vec::new();
                 #(#iter_body)*
                 variants.into_iter()
+            }
+        }
+
+        impl #name {
+            /// Creates a new, empty insert-only set for this enum.
+            pub fn InsertOnlySet() -> #set_name {
+                #set_name::new()
             }
         }
     };

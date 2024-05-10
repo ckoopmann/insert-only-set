@@ -1,6 +1,6 @@
-use insert_only_set::GenerateInsertOnlySet;
+use insert_only_set::InsertOnlySet;
 
-#[derive(GenerateInsertOnlySet, Debug, PartialEq)]
+#[derive(InsertOnlySet, Debug, PartialEq)]
 pub enum Type {
     Customer,
     Employee,
@@ -13,7 +13,7 @@ mod tests {
 
     #[test]
     fn test_insert_and_contains() {
-        let set = TypeInsertOnlySet::new();
+        let set = Type::InsertOnlySet();
 
         assert!(!set.contains(Type::Customer));
         assert!(!set.contains(Type::Employee));
@@ -29,7 +29,7 @@ mod tests {
 
     #[test]
     fn test_insert_once() {
-        let set = TypeInsertOnlySet::new();
+        let set = Type::InsertOnlySet();
 
         assert!(set.insert(Type::Customer));
         assert!(!set.insert(Type::Customer));
@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn test_iter() {
-        let set = TypeInsertOnlySet::new();
+        let set = Type::InsertOnlySet();
 
         assert!(set.iter().collect::<Vec<_>>().is_empty());
 

@@ -12,16 +12,16 @@ Under the hood this set is a struct with a `OnceLock` field for each enum varian
 ## Example
 
 ```rust 
-use insert_only_set::GenerateInsertOnlySet;
+use insert_only_set::InsertOnlySet;
 
-#[derive(GenerateInsertOnlySet, Debug, PartialEq)]
+#[derive(InsertOnlySet, Debug, PartialEq)]
 pub enum Type {
     Customer,
     Employee,
 }
 
 fn main() {
-    let set = TypeInsertOnlySet::new();
+    let set = Type::InsertOnlySet();
 
     assert!(!set.contains(Type::Customer));
     assert!(!set.contains(Type::Employee));
