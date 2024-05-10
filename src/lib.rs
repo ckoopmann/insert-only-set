@@ -4,12 +4,12 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput, Data, Ident};
 
-#[proc_macro_derive(GenerateAddOnlySet)]
+#[proc_macro_derive(GenerateInsertOnlySet)]
 pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
     let name = &input.ident;
-    let set_name = Ident::new(&format!("{}AddOnlySet", name), name.span());
+    let set_name = Ident::new(&format!("{}InsertOnlySet", name), name.span());
 
     let fields = if let Data::Enum(ref data_enum) = input.data {
         data_enum.variants.iter().map(|variant| {
@@ -22,23 +22,29 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
         vec![]
     };
 
-    let insert_methods = if let Data::Enum(ref data_enum) = input.data {
+    let new_fields_init = if let Data::Enum(ref data_enum) = input.data {
         data_enum.variants.iter().map(|variant| {
             let field_name = Ident::new(&variant.ident.to_string().to_lowercase(), variant.ident.span());
-            let variant_name = &variant.ident;
             quote! {
-                Type::#variant_name => self.#field_name.set(true).map_err(|_| "Already set"),
+                #field_name: std::sync::OnceLock::new(),
             }
         }).collect::<Vec<_>>()
     } else {
         vec![]
     };
 
-    let new_fields_init = if let Data::Enum(ref data_enum) = input.data {
+    let insert_methods = if let Data::Enum(ref data_enum) = input.data {
         data_enum.variants.iter().map(|variant| {
             let field_name = Ident::new(&variant.ident.to_string().to_lowercase(), variant.ident.span());
+            let variant_name = &variant.ident;
             quote! {
-                #field_name: std::sync::OnceLock::new(),
+                Type::#variant_name => {
+                    if self.#field_name.set(true).is_ok() {
+                        true
+                    } else {
+                        false
+                    }
+                },
             }
         }).collect::<Vec<_>>()
     } else {
@@ -83,7 +89,7 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
                 }
             }
 
-            pub fn insert(&self, t: Type) -> Result<(), &'static str> {
+            pub fn insert(&self, t: Type) -> bool {
                 match t {
                     #(#insert_methods)*
                 }
