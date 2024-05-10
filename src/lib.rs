@@ -34,6 +34,17 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
         vec![]
     };
 
+    let new_fields_init = if let Data::Enum(ref data_enum) = input.data {
+        data_enum.variants.iter().map(|variant| {
+            let field_name = Ident::new(&variant.ident.to_string().to_lowercase(), variant.ident.span());
+            quote! {
+                #field_name: std::sync::OnceLock::new(),
+            }
+        }).collect::<Vec<_>>()
+    } else {
+        vec![]
+    };
+
     let contains_methods = if let Data::Enum(ref data_enum) = input.data {
         data_enum.variants.iter().map(|variant| {
             let field_name = Ident::new(&variant.ident.to_string().to_lowercase(), variant.ident.span());
@@ -68,7 +79,7 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
         impl #set_name {
             pub fn new() -> Self {
                 Self {
-                    #(#fields: std::sync::OnceLock::new(),)*
+                    #(#new_fields_init)*
                 }
             }
 
