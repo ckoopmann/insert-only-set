@@ -73,7 +73,7 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
             let field_name = Ident::new(&variant.ident.to_string().to_lowercase(), variant.ident.span());
             let variant_name = &variant.ident;
             quote! {
-                Type::#variant_name => {
+                #name::#variant_name => {
                     if self.#field_name.set(true).is_ok() {
                         true
                     } else {
@@ -91,7 +91,7 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
             let field_name = Ident::new(&variant.ident.to_string().to_lowercase(), variant.ident.span());
             let variant_name = &variant.ident;
             quote! {
-                Type::#variant_name => self.#field_name.get().copied().unwrap_or(false),
+                #name::#variant_name => self.#field_name.get().copied().unwrap_or(false),
             }
         }).collect::<Vec<_>>()
     } else {
@@ -104,7 +104,7 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
             let variant_name = &variant.ident;
             quote! {
                 if self.#field_name.get().copied().unwrap_or(false) {
-                    variants.push(Type::#variant_name);
+                    variants.push(#name::#variant_name);
                 }
             }
         }).collect::<Vec<_>>()
@@ -124,19 +124,19 @@ pub fn generate_add_only_set(input: TokenStream) -> TokenStream {
                 }
             }
 
-            pub fn insert(&self, t: Type) -> bool {
+            pub fn insert(&self, t: #name) -> bool {
                 match t {
                     #(#insert_methods)*
                 }
             }
 
-            pub fn contains(&self, t: Type) -> bool {
+            pub fn contains(&self, t: #name) -> bool {
                 match t {
                     #(#contains_methods)*
                 }
             }
 
-            pub fn iter(&self) -> impl Iterator<Item = Type> + '_ {
+            pub fn iter(&self) -> impl Iterator<Item = #name> + '_ {
                 let mut variants = Vec::new();
                 #(#iter_body)*
                 variants.into_iter()

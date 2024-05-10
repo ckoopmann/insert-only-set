@@ -1,7 +1,7 @@
 use insert_only_set::InsertOnlySet;
 
 #[derive(InsertOnlySet, Debug, PartialEq)]
-pub enum Type {
+pub enum Person {
     Customer,
     Employee,
     // Add new variants here
@@ -13,40 +13,40 @@ mod tests {
 
     #[test]
     fn test_insert_and_contains() {
-        let set = Type::InsertOnlySet();
+        let set = Person::InsertOnlySet();
 
-        assert!(!set.contains(Type::Customer));
-        assert!(!set.contains(Type::Employee));
+        assert!(!set.contains(Person::Customer));
+        assert!(!set.contains(Person::Employee));
 
-        assert!(set.insert(Type::Customer));
-        assert!(set.contains(Type::Customer));
-        assert!(!set.contains(Type::Employee));
+        assert!(set.insert(Person::Customer));
+        assert!(set.contains(Person::Customer));
+        assert!(!set.contains(Person::Employee));
 
-        assert!(set.insert(Type::Employee));
-        assert!(set.contains(Type::Customer));
-        assert!(set.contains(Type::Employee));
+        assert!(set.insert(Person::Employee));
+        assert!(set.contains(Person::Customer));
+        assert!(set.contains(Person::Employee));
     }
 
     #[test]
     fn test_insert_once() {
-        let set = Type::InsertOnlySet();
+        let set = Person::InsertOnlySet();
 
-        assert!(set.insert(Type::Customer));
-        assert!(!set.insert(Type::Customer));
+        assert!(set.insert(Person::Customer));
+        assert!(!set.insert(Person::Customer));
     }
 
     #[test]
     fn test_iter() {
-        let set = Type::InsertOnlySet();
+        let set = Person::InsertOnlySet();
 
         assert!(set.iter().collect::<Vec<_>>().is_empty());
 
-        set.insert(Type::Customer);
-        let mut expected = vec![Type::Customer];
+        set.insert(Person::Customer);
+        let mut expected = vec![Person::Customer];
         assert_eq!(set.iter().collect::<Vec<_>>(), expected);
 
-        set.insert(Type::Employee);
-        expected.push(Type::Employee);
+        set.insert(Person::Employee);
+        expected.push(Person::Employee);
         assert_eq!(set.iter().collect::<Vec<_>>(), expected);
     }
 }
