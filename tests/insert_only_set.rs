@@ -10,7 +10,7 @@ pub enum Type {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_insert_and_contains() {
         let set = TypeInsertOnlySet::new();
